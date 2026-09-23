@@ -1,7 +1,6 @@
 --localize functions for better performance
 local string_byte = string.byte
 local string_sub = string.sub
-local get_item_group = minetest.get_item_group
 local add_particlespawner = minetest.add_particlespawner
 local add_item = minetest.add_item
 local get_node = minetest.get_node
@@ -53,7 +52,7 @@ local get_fire_particle = function (pos)
 end
 
 local function get_fuel_value(item)
-	input = {
+	local input = {
 		method = "fuel",
 		items = {item},
 	}

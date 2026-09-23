@@ -5,6 +5,7 @@ max_line_length = 999
 globals = {
 	"minetest",
 	"math", -- Fix 'math.hypot' not defined warning.
+	"mcl_serverplayer",
 }
 
 read_globals = {
