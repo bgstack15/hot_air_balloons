@@ -6,6 +6,7 @@ globals = {
 	"minetest",
 	"math", -- Fix 'math.hypot' not defined warning.
 	"mcl_serverplayer",
+	"mcl_localplayer",
 }
 
 read_globals = {
