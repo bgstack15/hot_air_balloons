@@ -12,13 +12,21 @@ local set_rescue, mark_for_deletion_if_piloted = dofile(modpath .. "/absent_ball
 local handle_movement = dofile(modpath .. "/movement.lua")
 
 local has_mcl = core.get_modpath("mcl_serverplayer") ~= nil
--- if you have mcl but not the csm, use these eye offsets:
+local zero = vector.zero()
+-- if you have halon luanti client but not the csm, use these eye offsets:
+--[[
 local eyes = {
 	first = { x = 0, y = 10, z = 0 },
 	third_back = { x = 0, y = 7, z = 0 },
-	third_front = { x = 0, y = 7, z = 0 }
+	third_front = { x = 0, y = 7, z = 0 },
 }
-local zero = vector.zero()
+--]]
+-- if you have vanilla luanti client, use these eye offsets:
+local eyes = {
+	first = zero,
+	third_back = zero,
+	third_front = zero,
+}
 
 local is_in_creative = function(name)
 	return creative and creative.is_enabled_for
