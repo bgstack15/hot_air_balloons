@@ -11,6 +11,15 @@ local modpath = minetest.get_modpath("hot_air_balloons")
 local set_rescue, mark_for_deletion_if_piloted = dofile(modpath .. "/absent_ballooner_rescuing.lua")
 local handle_movement = dofile(modpath .. "/movement.lua")
 
+local has_mcl = core.get_modpath("mcl_serverplayer") ~= nil
+-- if you have mcl but not the csm, use these eye offsets:
+local eyes = {
+	first = { x = 0, y = 10, z = 0 },
+	third_back = { x = 0, y = 7, z = 0 },
+	third_front = { x = 0, y = 7, z = 0 }
+}
+local zero = vector.zero()
+
 local is_in_creative = function(name)
 	return creative and creative.is_enabled_for
 		and creative.is_enabled_for(name)
@@ -66,6 +75,11 @@ local add_heat = function(self, player)
 	return true
 end
 
+local function attach_object(self, obj)
+	obj:set_attach(self.object, "",
+		{x = 0, y = 1, z = 0}, {x = 0, y = 0, z = 0})
+end
+
 --global table, has fields get_entity_def and get_item_def
 --custom balloons right now turn into normal ones when the pilot leaves
 hot_air_balloons = {}
@@ -116,13 +130,34 @@ hot_air_balloons.get_entity = function(name, mesh_name, texture_name)
 			then
 				self.pilot = nil
 				clicker:set_detach()
+				clicker:set_eye_offset(zero, zero, zero)
 			elseif not self.pilot
 			then
 				--attach
 				self.pilot = playername
+				if has_mcl then
+					mcl_serverplayer.begin_mount(clicker, self.object, name, {
+						bone = "",
+						position = zero,
+						rotation = zero,
+					})
+					-- need to set eye offset and attach if the client-side mod is not available
+					-- to use that begin_mount.
+					if not mcl_serverplayer.is_csm_capable(clicker) then
+						clicker:set_eye_offset(eyes["first"], eyes["third_back"], eyes["third_front"])
+						attach_object(self, clicker)
+					end
+				else
 				clicker:set_attach(self.object, "",
 					{x = 0, y = 1, z = 0}, {x = 0, y = 0, z = 0})
+				end
 			end
+		end,
+		complete_attachment = function(self, player, state)
+			attach_object(self, player)
+		end,
+		fallback_attach = function(self, player, state)
+			attach_object(self, player)
 		end,
 		--if pilot leaves start sinking and prepare for next pilot
 		on_detach_child = function(self, child)
