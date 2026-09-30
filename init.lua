@@ -12,20 +12,18 @@ local handle_movement = dofile(modpath .. "/movement.lua")
 
 local has_mcl = core.get_modpath("mcl_serverplayer") ~= nil
 local zero = vector.zero()
--- if you have halon luanti client but not the csm, use these eye offsets:
---[[
-local eyes = {
-	first = { x = 0, y = 10, z = 0 },
-	third_back = { x = 0, y = 7, z = 0 },
-	third_front = { x = 0, y = 7, z = 0 },
-}
---]]
--- if you have vanilla luanti client, use these eye offsets:
 local eyes = {
 	first = zero,
 	third_back = zero,
 	third_front = zero,
 }
+if core.settings:get_bool("hot_air_balloons.csm_eyeoffset", false) then
+	eyes = {
+		first = { x = 0, y = 10, z = 0 },
+		third_back = { x = 0, y = 7, z = 0 },
+		third_front = { x = 0, y = 7, z = 0 },
+	}
+end
 
 local is_in_creative = function(name)
 	return creative and creative.is_enabled_for
